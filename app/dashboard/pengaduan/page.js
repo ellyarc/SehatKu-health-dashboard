@@ -6,7 +6,11 @@ import { tglIndo } from '@/lib/format'
 import { Badge, Card, Empty, Field, Notice, PageHeader } from '@/components/ui'
 
 const KATEGORI = ['Antrean lama', 'Pelayanan petugas/dokter', 'Obat tidak tersedia', 'Biaya/penjaminan', 'Aplikasi', 'Lainnya']
-
+const STATUS = {
+  baru: ['Diterima', 'muted'],
+  diproses: ['Sedang ditindaklanjuti', 'warn'],
+  selesai: ['Selesai ditangani', 'ok'],
+}
 export default function Pengaduan() {
   const { user } = useAuth()
   const [data, setData] = useState([])
@@ -28,8 +32,7 @@ export default function Pengaduan() {
 
   return (
     <>
-      <PageHeader judul="Pengaduan" deskripsi="Sampaikan keluhan layanan. Petugas membalas di sini." />
-      <Card judul="Buat pengaduan">
+      <PageHeader judul="Pengaduan" deskripsi="Sampaikan keluhan layanan dan pantau perkembangannya di sini. Untuk keadaan darurat, gunakan tombol SOS." />      <Card judul="Buat pengaduan">
         <form onSubmit={kirim} className="stack">
           <Field label="Kategori"><select className="input" value={f.kategori} onChange={(e) => setF({ ...f, kategori: e.target.value })}>{KATEGORI.map((k) => <option key={k}>{k}</option>)}</select></Field>
           <Field label="Isi pengaduan"><textarea className="input" value={f.isi} onChange={(e) => setF({ ...f, isi: e.target.value })} required /></Field>
@@ -40,10 +43,15 @@ export default function Pengaduan() {
       <Card judul="Pengaduan saya">
         {data.length === 0 ? <Empty>Belum ada pengaduan.</Empty> : data.map((p) => (
           <div key={p.id} className="resep-row">
-            <div className="row"><b>{p.kategori}</b><Badge tone={p.status === 'selesai' ? 'ok' : p.status === 'diproses' ? 'warn' : 'muted'}>{p.status}</Badge></div>
-            <p>{p.isi}</p><p className="muted">{tglIndo(p.created_at)}</p>
-            {p.balasan && <Notice><b>Balasan petugas:</b> {p.balasan}</Notice>}
-          </div>
+  <div className="row">
+    <b>{p.kategori}</b>
+    <Badge tone={STATUS[p.status][1]}>{STATUS[p.status][0]}</Badge>
+  </div>
+  <p>{p.isi}</p>
+  <p className="muted">Dikirim {tglIndo(p.created_at)}</p>
+  {p.status === 'baru' && <p className="muted">Menunggu ditinjau petugas.</p>}
+  {p.balasan && <Notice><b>Catatan penanganan:</b> {p.balasan}</Notice>}
+</div>
         ))}
       </Card>
     </>

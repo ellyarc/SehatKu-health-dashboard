@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/components/AuthProvider'
 import { usePasienList } from '@/lib/hooks'
-import { hariIni, umurTeks } from '@/lib/format'
+import { hariIni, umurTeks, rapikanHp, hpValid } from '@/lib/format'
 import { Badge, Card, Field, Notice, PageHeader } from '@/components/ui'
 
 export default function Keluarga() {
@@ -29,13 +29,19 @@ export default function Keluarga() {
   const set = (k) => (e) => setF({ ...f, [k]: e.target.value })
 
   async function simpan(e) {
-    e.preventDefault(); setPesan(null)
-    const { data, error } = await supabase.rpc('lengkapi_data_diri', {
-      p_nama: f.nama, p_nik: f.nik, p_tgl: f.tgl || null, p_jk: f.jk, p_hp: f.hp, p_alamat: f.alamat,
-      p_penjamin: f.penjamin, p_no_penjamin: f.noPenjamin || null, p_faskes1: f.faskes1 || null,
-      p_kd_nama: f.kdNama, p_kd_hp: f.kdHp, p_alergi: f.alergi,
-    })
-    if (error) return setPesan({ tone: 'danger', teks: error.message })
+  e.preventDefault(); setPesan(null)
+  const hp = rapikanHp(f.hp)
+  const kdHp = rapikanHp(f.kdHp)
+  if (!hpValid(hp)) return setPesan({ tone: 'danger', teks: 'Nomor HP tidak valid. Contoh: 081234567890' })
+  if (!hpValid(kdHp)) return setPesan({ tone: 'danger', teks: 'Nomor HP kontak darurat tidak valid. Contoh: 081234567890' })
+
+  const { data, error } = await supabase.rpc('lengkapi_data_diri', {
+    p_nama: f.nama, p_nik: f.nik, p_tgl: f.tgl || null, p_jk: f.jk, p_hp: hp, p_alamat: f.alamat,
+    p_penjamin: f.penjamin, p_no_penjamin: f.noPenjamin || null, p_faskes1: f.faskes1 || null,
+    p_kd_nama: f.kdNama, p_kd_hp: kdHp, p_alergi: f.alergi,
+  })
+  if (error) return setPesan({ tone: 'danger', teks: error.message })
+    setF({ ...f, hp, kdHp })
     await muatAuth(); await muat()
     setPesan({
       tone: 'ok',
@@ -63,12 +69,17 @@ export default function Keluarga() {
         <form onSubmit={simpan} className="stack">
           <div className="grid2">
             <Field label="Nama lengkap"><input className="input" value={f.nama} onChange={set('nama')} required /></Field>
-            <Field label="NIK (16 digit)"><input className="input" inputMode="numeric" pattern="[0-9]{16}" maxLength={16} value={f.nik} onChange={set('nik')} required /></Field>
+            <Field label="NIK (16 digit)" hint={diri?.nik ? 'Diisi saat mendaftar' : undefined}>
+  <input className="input" inputMode="numeric" pattern="[0-9]{16}" maxLength={16}
+    value={f.nik} onChange={set('nik')} required readOnly={!!diri?.nik} />
+</Field>
             <Field label="Tanggal lahir"><input className="input" type="date" max={hariIni()} value={f.tgl} onChange={set('tgl')} required /></Field>
             <Field label="Jenis kelamin">
               <select className="input" value={f.jk} onChange={set('jk')}><option value="L">Laki-laki</option><option value="P">Perempuan</option></select>
             </Field>
-            <Field label="No. HP"><input className="input" value={f.hp} onChange={set('hp')} /></Field>
+            <Field label="No. HP" hint="Contoh: 081234567890">
+  <input className="input" type="tel" inputMode="tel" autoComplete="tel" value={f.hp} onChange={set('hp')} />
+</Field>
             <Field label="Alamat"><input className="input" value={f.alamat} onChange={set('alamat')} /></Field>
             <Field label="Penjamin">
               <select className="input" value={f.penjamin} onChange={set('penjamin')}>
@@ -87,7 +98,9 @@ export default function Keluarga() {
             </Field>
             <Field label="Alergi obat/makanan" hint="Ditampilkan ke dokter saat memeriksa"><input className="input" value={f.alergi} onChange={set('alergi')} placeholder="Contoh: penisilin" /></Field>
             <Field label="Kontak darurat (nama)"><input className="input" value={f.kdNama} onChange={set('kdNama')} /></Field>
-            <Field label="Kontak darurat (HP)"><input className="input" value={f.kdHp} onChange={set('kdHp')} /></Field>
+            <Field label="Kontak darurat (HP)" hint="Contoh: 081234567890">
+  <input className="input" type="tel" inputMode="tel" value={f.kdHp} onChange={set('kdHp')} />
+</Field>
           </div>
           {pesan && <Notice tone={pesan.tone}>{pesan.teks}</Notice>}
           <button className="btn inline">Simpan data diri</button>

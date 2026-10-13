@@ -40,16 +40,24 @@ function BerandaPasien() {
     })()
   }, [list])
 
+  const kurang = []
+if (!diri?.nik) kurang.push('NIK')
+if (!diri?.tgl_lahir) kurang.push('tanggal lahir')
+if (!diri?.jenis_kelamin) kurang.push('jenis kelamin')
+if (!diri?.no_hp) kurang.push('nomor HP')
+if (!diri?.alamat) kurang.push('alamat')
+
   return (
     <>
       <PageHeader judul={`Halo, ${diri?.nama?.split(' ')[0] || 'selamat datang'}`} deskripsi="Ringkasan layanan kesehatanmu dan keluarga hari ini." />
 
-      {!diri?.nik && (
-        <Notice tone="warn">
-          Data diri belum lengkap. Isi NIK agar riwayat berobat tersimpan terpadu dan penjaminan BPJS bisa dicek.{' '}
-          <Link href="/dashboard/keluarga">Lengkapi sekarang</Link>
-        </Notice>
-      )}
+      {kurang.length > 0 && (
+  <Notice tone="warn">
+    Lengkapi data dirimu: <b>{kurang.join(', ')}</b>. Data ini dipakai dokter saat memeriksa,
+    dan membantu petugas menghubungimu kalau obatmu terlewat.{' '}
+    <Link href="/dashboard/keluarga">Lengkapi sekarang</Link>
+  </Notice>
+)}
 
       <div className="grid3">
         <Stat nilai={d.antrean.length} label="Antrean aktif hari ini" />

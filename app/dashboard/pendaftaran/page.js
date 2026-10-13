@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/components/AuthProvider'
 import CariPasien from '@/components/CariPasien'
-import { hariIni, jam, rupiah, umurTeks } from '@/lib/format'
+import { hariIni, jam, rupiah, umurTeks, rapikanHp} from '@/lib/format'
 import { PERTANYAAN, nilaiTriase, jawabanBersih } from '@/lib/triase'
 import { Card, Field, Notice, PageHeader } from '@/components/ui'
 
@@ -31,7 +31,7 @@ export default function Pendaftaran() {
   async function daftarBaru(e) {
     e.preventDefault(); setError('')
     const { data, error } = await supabase.rpc('daftar_pasien_baru', {
-      p_nama: f.nama, p_nik: f.nik || null, p_tgl: f.tgl || null, p_jk: f.jk, p_hp: f.hp || null,
+      p_nama: f.nama, p_nik: f.nik || null, p_tgl: f.tgl || null, p_jk: f.jk, p_hp: rapikanHp(f.hp) || null,
       p_alamat: f.alamat || null, p_penjamin: f.penjamin, p_no_penjamin: f.noPenjamin || null,
     })
     if (error) return setError(error.message)
