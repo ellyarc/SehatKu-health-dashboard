@@ -79,7 +79,7 @@ if (!diri?.alamat) kurang.push('alamat')
         </div>
       </div>
 
-      <Card judul="Antrean hari ini" aksi={<Link className="link" href="/dashboard/antrean">Kelola</Link>}>
+      <Card judul="Antrean hari ini" aksi={<Link className="link" href="/dashboard/antrean">Daftar Antrean</Link>}>
         {d.antrean.length === 0 ? <Empty>Belum ada antrean aktif.</Empty> : (
           <ul className="plain">
             {d.antrean.map((a) => (
