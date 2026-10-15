@@ -2,9 +2,9 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { usePasienList } from '@/lib/hooks'
-import { tglIndo } from '@/lib/format'
+import { hariIni, tglIndo } from '@/lib/format'
 import KunjunganCard, { SELECT_KUNJUNGAN } from '@/components/KunjunganCard'
-import { Card, Empty, PageHeader, PasienSelect } from '@/components/ui'
+import { Card, Empty, PageHeader, PasienSelect, Stat } from '@/components/ui'
 
 export default function Riwayat() {
   const { list } = usePasienList()
@@ -30,16 +30,25 @@ export default function Riwayat() {
     })()
   }, [sel])
 
+  const kontrol = (kunjungan ?? []).map((k) => k.tgl_kontrol).filter((t) => t && t >= hariIni()).sort()[0]
+
   return (
     <>
-      <PageHeader judul="Riwayat & tugas saya" deskripsi="Catatan pemeriksaan, tugas perawatan di rumah, obat, dan hasil lab. Keluarga yang tertaut juga bisa membacanya." />
+      <PageHeader judul="Riwayat" deskripsi="Catatan pemeriksaan, anjuran dokter, obat, dan hasil lab dari setiap kunjungan. Keluarga yang tertaut juga bisa membacanya." />
       <PasienSelect list={list} value={sel} onChange={setSel} />
+
+      {kunjungan && kunjungan.length > 0 && (
+        <div className="grid3">
+          <Stat nilai={kunjungan.length} label="Kunjungan tercatat" />
+          <Stat nilai={kontrol ? tglIndo(kontrol) : '-'} label="Kontrol berikutnya" />
+        </div>
+      )}
 
       {kunjungan === null ? <p className="muted">Memuat...</p>
         : kunjungan.length === 0 ? <Empty>Belum ada riwayat kunjungan.</Empty>
         : kunjungan.map((k) => <KunjunganCard key={k.id} k={k} />)}
 
-      <Card judul="Siapa yang membuka data ini">
+      <Card judul="Siapa yang pernah membuka rekam medismu">
         {akses.length === 0 ? <p className="muted">Belum ada tenaga kesehatan yang mencari data ini lewat NIK.</p> : (
           <ul className="plain">
             {akses.map((a, i) => (

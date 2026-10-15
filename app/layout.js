@@ -1,7 +1,8 @@
 import './globals.css'
+import { NAMA_APP, TAGLINE } from '@/lib/brand'
 
 export const metadata = {
-  title: 'SiAntre – Layanan kesehatan terpadu',
+  title: `${NAMA_APP} – ${TAGLINE}`,
   description: 'Antrean dinamis, rekam medis, obat, rujukan, dan layanan kesehatan dalam satu dashboard.',
 }
 

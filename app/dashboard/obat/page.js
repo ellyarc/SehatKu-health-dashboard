@@ -128,7 +128,7 @@ export default function Obat() {
             <Field label="Nama obat"><input className="input" value={f.nama} onChange={(e) => setF({ ...f, nama: e.target.value })} required /></Field>
             <Field label="Aturan (opsional)"><input className="input" placeholder="1x sesudah makan" value={f.aturan} onChange={(e) => setF({ ...f, aturan: e.target.value })} /></Field>
             <Field label="Jam minum" hint="Pisahkan dengan koma"><input className="input" value={f.jam} onChange={(e) => setF({ ...f, jam: e.target.value })} required /></Field>
-            <Field label="Lama (hari)" hint="Kosongkan jika terus-menerus"><input className="input" type="number" min="1" value={f.durasi} onChange={(e) => setF({ ...f, durasi: e.target.value })} /></Field>
+            <Field label="Durasi" hint="Jumlah hari. Kosongkan jika terus-menerus"><input className="input" type="number" min="1" value={f.durasi} onChange={(e) => setF({ ...f, durasi: e.target.value })} /></Field>
           </div>
           <label className="check"><input type="checkbox" checked={f.kronis} onChange={(e) => setF({ ...f, kronis: e.target.checked })} /><span>Obat jangka panjang (TBC, darah tinggi, diabetes)</span></label>
           {error && <p className="error">{error}</p>}

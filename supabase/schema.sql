@@ -1,5 +1,5 @@
 -- =====================================================================
--- SiAntre: skema lengkap (semua fitur).
+-- SehatKu: skema lengkap (semua fitur).
 -- AMAN DIJALANKAN BERULANG: bagian paling atas menghapus semua tabel dan
 -- fungsi lama di schema public, lalu membuatnya lagi dari nol.
 -- PERHATIAN: seluruh DATA di schema public ikut terhapus (antrean, pasien,
@@ -400,7 +400,10 @@ create policy "kunjungan_baca" on kunjungan for select to authenticated
 create policy "lab_baca" on lab_hasil for select to authenticated
   using (akses_ok(pasien_id) or punya_peran('{dokter}'));
 
-create policy "obat_baca" on obat for select to authenticated using (true);
+-- Stok obat hanya untuk tenaga kesehatan. Pasien melihat ketersediaan obatnya
+-- lewat Riwayat (dicatat dokter saat meresepkan), bukan lewat daftar stok.
+create policy "obat_baca" on obat for select to authenticated
+  using (punya_peran('{petugas,dokter,apoteker}'));
 create policy "obat_kelola_ins" on obat for insert to authenticated
   with check (staf_faskes(faskes_id, '{apoteker}'));
 create policy "obat_kelola_upd" on obat for update to authenticated

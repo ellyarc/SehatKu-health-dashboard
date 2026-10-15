@@ -86,7 +86,7 @@ export default function Periksa() {
     })
     setBusy(false)
     if (error) return setPesan({ tone: 'danger', teks: error.message })
-    setPesan({ tone: 'ok', teks: 'Pemeriksaan tersimpan. Ringkasan tugas, pengingat obat, dan resep sudah terkirim ke pasien dan apotek.' })
+    setPesan({ tone: 'ok', teks: 'Pemeriksaan tersimpan. Anjuran dokter, pengingat obat, dan resep sudah terkirim ke pasien dan apotek.' })
     muat()
     supabase.from('obat').select('*').eq('faskes_id', profil.faskes_id).order('nama').then(({ data }) => setObatList(data ?? []))
   }
@@ -96,7 +96,7 @@ export default function Periksa() {
 
   return (
     <>
-      <PageHeader judul="Ruang periksa" deskripsi="Pilih poli, panggil pasien, lalu isi pemeriksaan. Hasilnya otomatis menjadi tugas pasien, resep, pengingat obat, dan tagihan." />
+      <PageHeader judul="Ruang periksa" deskripsi="Pilih poli, panggil pasien, lalu isi pemeriksaan. Hasilnya otomatis masuk ke riwayat pasien, resep, pengingat obat, dan tagihan." />
       <div className="row-form">
         <select className="input" value={poliId} onChange={(e) => setPoliId(e.target.value)}>
           {poliList.map((x) => <option key={x.id} value={x.id}>{x.nama_poli}</option>)}
@@ -126,7 +126,7 @@ export default function Periksa() {
             </Card>
 
             <Card judul="Resep" aksi={<button type="button" className="btn small" onClick={() => setResep([...resep, { ...RESEP0 }])}>+ Tambah obat</button>}>
-              {resep.length === 0 && <p className="muted">Belum ada obat. Stok apotek tampil langsung saat memilih obat.</p>}
+              {resep.length === 0 && <p className="muted">Belum ada obat. Stok apotek tampil langsung saat memilih obat, dan ketersediaannya otomatis tercatat di riwayat pasien.</p>}
               {resep.map((r, i) => {
                 const o = obatList.find((x) => x.id === r.obat_id)
                 const kurang = o && !r.resep_luar && o.stok < Number(r.jumlah)
@@ -145,7 +145,7 @@ export default function Periksa() {
                       </Field>
                       <Field label="Jumlah"><input className="input" type="number" min="1" value={r.jumlah} onChange={(e) => ubahResep(i, { jumlah: e.target.value })} /></Field>
                       <Field label="Frekuensi/hari"><select className="input" value={r.frekuensi} onChange={(e) => ubahResep(i, { frekuensi: e.target.value })}>{[1, 2, 3, 4].map((n) => <option key={n} value={n}>{n}x</option>)}</select></Field>
-                      <Field label="Lama (hari)"><input className="input" type="number" min="1" value={r.durasi_hari} onChange={(e) => ubahResep(i, { durasi_hari: e.target.value })} /></Field>
+                      <Field label="Durasi" hint="Jumlah hari"><input className="input" type="number" min="1" value={r.durasi_hari} onChange={(e) => ubahResep(i, { durasi_hari: e.target.value })} /></Field>
                       <Field label="Aturan pakai"><input className="input" placeholder="3x1 sesudah makan" value={r.aturan_pakai} onChange={(e) => ubahResep(i, { aturan_pakai: e.target.value })} /></Field>
                       {r.resep_luar && <Field label="Nama obat (resep luar)"><input className="input" value={r.nama_obat} onChange={(e) => ubahResep(i, { nama_obat: e.target.value })} /></Field>}
                     </div>
@@ -185,7 +185,7 @@ export default function Periksa() {
               {lab.length === 0 && <p className="muted">Hasil lab tersimpan di rekam medis dan bisa dilihat dokter lain tanpa tes ulang.</p>}
             </Card>
 
-            <Card judul="Tugas untuk pasien (ringkasan pasca-berobat)">
+            <Card judul="Anjuran untuk pasien (setelah berobat)">
               <div className="stack">
                 <Field label="Perawatan di rumah"><textarea className="input" value={form.instruksi} onChange={set('instruksi')} /></Field>
                 <Field label="Pantangan"><input className="input" value={form.pantangan} onChange={set('pantangan')} /></Field>

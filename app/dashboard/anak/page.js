@@ -15,9 +15,9 @@ export default function Anak() {
 
   return (
     <>
-      <PageHeader judul="KMS & imunisasi anak" deskripsi="Pantau tumbuh kembang dan jadwal imunisasi anak, lengkap dengan peringatan risiko stunting sejak dini." />
+      <PageHeader judul="Kesehatan anak" deskripsi="Pantau tinggi dan berat badan anak, jadwal imunisasi, dan dapatkan peringatan dini kalau ada risiko stunting." />
       {anak.length === 0 ? (
-        <Empty>Belum ada anak yang tertaut. <Link href="/dashboard/keluarga">Tambahkan anggota keluarga</Link> dengan tanggal lahir.</Empty>
+        <Empty>Belum ada anak di bawah 6 tahun yang tertaut. <Link href="/dashboard/keluarga">Tambahkan anggota keluarga</Link> beserta tanggal lahirnya.</Empty>
       ) : (
         <>
           <PasienSelect list={anak} value={sel} onChange={setSel} />

@@ -8,7 +8,7 @@ export default function Posyandu() {
   const [p, setP] = useState(null)
   return (
     <>
-      <PageHeader judul="Posyandu: KMS digital" deskripsi="Catat berat dan tinggi anak, lihat grafik pertumbuhan, dan tandai imunisasi yang sudah diberikan. Orang tua langsung bisa melihatnya di akun mereka." />
+      <PageHeader judul="Posyandu anak" deskripsi="Catat berat dan tinggi anak, lihat grafik pertumbuhan, dan tandai imunisasi yang sudah diberikan. Orang tua langsung bisa melihatnya di akun mereka." />
       {!p ? (
         <Card judul="Cari anak"><CariPasien onPilih={setP} label="Nama anak atau NIK" /></Card>
       ) : (

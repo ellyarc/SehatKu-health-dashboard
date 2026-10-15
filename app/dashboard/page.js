@@ -6,6 +6,8 @@ import { useAuth } from '@/components/AuthProvider'
 import { usePasienList } from '@/lib/hooks'
 import { hariIni, selisihHari, tglIndo } from '@/lib/format'
 import { Card, Empty, Notice, PageHeader, Stat } from '@/components/ui'
+import { MENU } from '@/lib/menu'
+import Icon from '@/components/Icons'
 
 export default function Beranda() {
   const { profil } = useAuth()
@@ -63,6 +65,18 @@ if (!diri?.alamat) kurang.push('alamat')
         <Stat nilai={d.antrean.length} label="Antrean aktif hari ini" />
         <Stat nilai={d.belumMinum} label="Dosis obat belum dikonfirmasi" />
         <Stat nilai={d.rujukan.length} label="Rujukan hampir habis" />
+      </div>
+
+      <div>
+        <h2>Akses cepat</h2>
+        <div className="cepat mt">
+          {MENU.filter((m) => m.peran.includes('pasien') && m.ket && !['/dashboard/sos'].includes(m.href)).map((m) => (
+            <Link key={m.href} href={m.href}>
+              <span className="ic"><Icon name={m.ikon} size={22} /></span>
+              <span><b>{m.label}</b><small>{m.ket}</small></span>
+            </Link>
+          ))}
+        </div>
       </div>
 
       <Card judul="Antrean hari ini" aksi={<Link className="link" href="/dashboard/antrean">Kelola</Link>}>

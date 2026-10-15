@@ -6,6 +6,8 @@ import { AuthProvider, useAuth } from '@/components/AuthProvider'
 import { Logo } from '@/components/PublicBar'
 import { MENU, NAMA_PERAN } from '@/lib/menu'
 import { supabase } from '@/lib/supabase'
+import { NAMA_APP } from '@/lib/brand'
+import Icon from '@/components/Icons'
 
 function Shell({ children }) {
   const { loading, user, profil } = useAuth()
@@ -37,14 +39,14 @@ function Shell({ children }) {
     <div className="app">
       <div className={`scrim ${buka ? 'buka' : ''}`} onClick={() => setBuka(false)} />
       <aside className={`sidebar ${buka ? 'buka' : ''}`}>
-        <Link href="/dashboard" className="brand"><Logo /> SiAntre</Link>
+        <Link href="/dashboard" className="brand"><Logo /> {NAMA_APP}</Link>
         <p className="peran">{profil.nama} · {NAMA_PERAN[profil.role]}</p>
         <nav className="nav" aria-label="Menu utama">
           {grup.map((g) => (
             <div key={g}>
               {g !== 'Utama' && <div className="grup">{g}</div>}
               {menu.filter((m) => m.grup === g).map((m) => (
-                <Link key={m.href} href={m.href} className={path === m.href ? 'aktif' : ''}>{m.label}</Link>
+                <Link key={m.href} href={m.href} className={path === m.href ? 'aktif' : ''}><Icon name={m.ikon} size={18} /><span>{m.label}</span></Link>
               ))}
             </div>
           ))}
@@ -54,7 +56,7 @@ function Shell({ children }) {
 
       <div className="main">
         <div className="mobilebar">
-          <span className="brand"><Logo /> SiAntre</span>
+          <span className="brand"><Logo /> {NAMA_APP}</span>
           <button onClick={() => setBuka(true)} aria-label="Buka menu">Menu</button>
         </div>
         <main className="content">{children}</main>
